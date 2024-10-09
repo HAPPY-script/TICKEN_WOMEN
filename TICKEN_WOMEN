@@ -1,0 +1,84 @@
+local player = game.Players.LocalPlayer
+
+-- Tạo ScreenGui để chứa menu
+local screenGui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
+
+-- Tạo menu
+local menu = Instance.new("Frame", screenGui)
+menu.Size = UDim2.new(0, 267, 0, 150) -- Kích thước menu nhỏ lại
+menu.Position = UDim2.new(0.5, -133, 0.5, -50) -- Vị trí ở giữa màn hình
+menu.BackgroundColor3 = Color3.fromRGB(75, 0, 130) -- Màu nền tím đậm
+menu.BorderSizePixel = 0 -- Không viền
+
+-- Thêm viền hồng phát sáng cho menu
+local border = Instance.new("Frame", menu)
+border.Size = UDim2.new(1, 10, 1, 10) -- Viền bao quanh menu
+border.Position = UDim2.new(0, -5, 0, -5) -- Đặt vị trí viền
+border.BackgroundColor3 = Color3.fromRGB(255, 105, 180) -- Màu hồng phát sáng
+border.BorderSizePixel = 0
+border.BackgroundTransparency = 0.5 -- Tạo độ sáng cho viền
+
+-- Nút xóa đỏ ở góc trên bên trái
+local closeButton = Instance.new("TextButton", menu)
+closeButton.Size = UDim2.new(0, 25, 0, 25)
+closeButton.Position = UDim2.new(0, 5, 0, 5)
+closeButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0) -- Màu đỏ
+closeButton.Text = "X"
+closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+closeButton.MouseButton1Click:Connect(function()
+    menu:Destroy() -- Xóa menu khi nhấn nút
+end)
+
+-- Nút OPEN
+local openButton = Instance.new("TextButton", menu)
+openButton.Size = UDim2.new(0, 100, 0, 40) -- Kích thước nút
+openButton.Position = UDim2.new(0.5, -50, 1, -50) -- Nút nhích lên một chút so với cạnh dưới
+openButton.BackgroundColor3 = Color3.fromRGB(75, 0, 130) -- Màu nền nút tím tối
+openButton.Text = "OPEN"
+openButton.TextColor3 = Color3.fromRGB(255, 105, 180) -- Màu chữ hồng phát quang
+openButton.BorderColor3 = Color3.fromRGB(148, 0, 211) -- Viền nút tím phát sáng
+openButton.MouseButton1Click:Connect(function()
+    -- Khi bấm vào OPEN, tải script và ẩn menu
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/HAPPY-script/WOMEN/refs/heads/main/WOMEN"))()
+    menu:Destroy() -- Xóa menu
+end)
+
+-- Dòng chữ ở giữa menu (bạn có thể chỉnh sửa nội dung)
+local textLabel = Instance.new("TextLabel", menu)
+textLabel.Size = UDim2.new(1, 0, 0, 60) -- Kích thước của dòng chữ
+textLabel.Position = UDim2.new(0, 0, 0.3, 0) -- Vị trí ở giữa menu
+textLabel.Text = "TP TO ISLAND WOMEN" -- Bạn có thể chỉnh sửa dòng chữ này
+textLabel.TextColor3 = Color3.fromRGB(255, 105, 180) -- Màu chữ hồng phát quang
+textLabel.BackgroundTransparency = 1 -- Làm nền trong suốt
+textLabel.TextScaled = true -- Tự động điều chỉnh kích thước chữ
+
+-- Cho phép kéo thả menu
+local dragging = false
+local dragInput, mousePos, framePos
+
+menu.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        mousePos = input.Position
+        framePos = menu.Position
+
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+
+menu.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement then
+        dragInput = input
+    end
+end)
+
+game:GetService("UserInputService").InputChanged:Connect(function(input)
+    if input == dragInput and dragging then
+        local delta = input.Position - mousePos
+        menu.Position = UDim2.new(framePos.X.Scale, framePos.X.Offset + delta.X, framePos.Y.Scale, framePos.Y.Offset + delta.Y)
+    end
+end)
